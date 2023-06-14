@@ -2,6 +2,9 @@
   "name": "ultra-cpp",
   "displayName": "Ultra.io C++",
   "description": "Providing C++ Header Files for Smart Contracts with EOSIO",
+  "repository": {
+    "url": "https://github.com/Stuyk/ultra-cpp-extension"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.79.0"
