@@ -1,12 +1,23 @@
-# Ultra.io C++
+# Ultra.io Smart Contract Toolkit
 
-This VSCode extension enables header files for `C++` files. It auto-injects `EOSIO` based C++ header files and enables auto-completion in VSCode.
+This VSCode extension enables header files for `C++` files. 
+
+It auto-injects `EOSIO` based C++ header files and enables auto-completion in VSCode.
+
+It also allows you to build contracts using the VSCode Command Palette.
+
+Simply press `CTRL + SHIFT + P` and type `Ultra: Build Contract`.
+
+## Features
+
+- Add header files to any smart contract workspace for easy auto-completion
+- Ability to compile smart contracts using Docker images
 
 ## Prerequisities
 
-- Docker
-
 **Make sure you have docker installed while using this tool!**
+
+- Docker
 
 ## Usage
 
@@ -21,8 +32,15 @@ Make sure you have the [Microsoft C++ Extension Installed](https://marketplace.v
 
 ## FAQ
 
-Q. What activates the prompt?
-A. Open any `C++` file and it will prompt you to add header files.
+- Q. What activates the prompt?
+  - A. Open any `C++` file and it will prompt you to add header files.
 
-Q. It stopped working, what can I do to fix it?
-A. re-install this application, and remove your `.vscode` folder from your workspace folder.
+<br />
+
+- Q. It stopped working, what can I do to fix it?
+  - A. re-install this application, and remove your `.vscode` folder from your workspace folder.
+
+<br />
+
+- Q. My smart contracts aren't compiling.
+  - A. Ensure that you can run `docker` from the `CLI`. If not, install docker. 

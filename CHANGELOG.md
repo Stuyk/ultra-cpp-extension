@@ -2,6 +2,10 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 0.0.4
+
+- Better README
+
 ## 0.0.3
 
 - Add C++ Build Tool Workflow with Docker
