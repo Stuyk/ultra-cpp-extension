@@ -5,30 +5,53 @@ import * as fs from 'fs';
 import { getTemplate } from './cppTemplate';
 import { build } from '@ultraos/contract-builder';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export async function activate(context: vscode.ExtensionContext) {
-    await new Promise((resolve: Function) => {
-        const interval = setInterval(() => {
-            if (vscode.window.activeTextEditor) {
-                clearInterval(interval);
-                return resolve();
-            }
-        }, 1000);
-    });
+const CommandNames = {
+    installHeaders: 'ultra.installHeaders',
+    buildContract: 'ultra.buildContract',
+};
 
-    if (!vscode.window.activeTextEditor) {
-        return;
+function getWorkspaceFolder(): string | undefined {
+    if (!vscode.workspace.workspaceFolders) {
+        return undefined;
     }
 
-    const activeWorkspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
-    const folderPath = activeWorkspaceFolder?.uri.fsPath.replace(/\\/gm, '/');
+    const activeWorkspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.workspace.workspaceFolders[0].uri);
+    return activeWorkspaceFolder?.uri.fsPath.replace(/\\/gm, '/');
+}
 
-    const outputChannel = vscode.window.createOutputChannel('ultra-cpp');
+function cmdBuildContract(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
+    const buildContract = vscode.commands.registerCommand(CommandNames.buildContract, async () => {
+        outputChannel.appendLine(
+            `Starting contract build, if this is your first time running this. It may take a moment to get the docker image, and start.`
+        );
+        outputChannel.show(true);
+        const startTime = Date.now();
 
-    const showInfo = vscode.commands.registerCommand('ultra.showInfoAsModal', async () => {
+        const workspaceFolder = getWorkspaceFolder();
+        if (!workspaceFolder) {
+            outputChannel.appendLine(`Could not determine workspace folder.`);
+            outputChannel.appendLine(`Try opening VSCode directly on the folder containing the smart contract.`);
+            return;
+        }
+
+        await build(String(workspaceFolder), { buildOpts: '', appendLine: outputChannel.appendLine });
+        outputChannel.appendLine(`Done | ${Date.now() - startTime}ms`);
+    });
+
+    context.subscriptions.push(buildContract);
+}
+
+function cmdInstallHeaders(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
+    const installHeaders = vscode.commands.registerCommand(CommandNames.installHeaders, async () => {
+        const workspaceFolder = getWorkspaceFolder();
+        if (!workspaceFolder) {
+            outputChannel.appendLine(`Could not determine workspace folder.`);
+            outputChannel.appendLine(`Try opening VSCode directly on the folder containing the smart contract.`);
+            return;
+        }
+
         // Copy Library Files
-        if (!fs.existsSync(folderPath + '/lib')) {
+        if (!fs.existsSync(workspaceFolder + '/lib')) {
             const selection = await vscode.window.showInformationMessage(
                 'Add Ultra.io Header Files to this Project?',
                 'Yes',
@@ -36,7 +59,7 @@ export async function activate(context: vscode.ExtensionContext) {
             );
 
             if (selection && selection === 'Yes') {
-                fs.cpSync(`${context.extensionPath}/include`, `${folderPath}/lib`, {
+                fs.cpSync(`${context.extensionPath}/include`, `${workspaceFolder}/lib`, {
                     recursive: true,
                     force: true,
                 });
@@ -45,7 +68,7 @@ export async function activate(context: vscode.ExtensionContext) {
             }
         }
 
-        if (!fs.existsSync(folderPath + '/.vscode/c_cpp_properties.json')) {
+        if (!fs.existsSync(workspaceFolder + '/.vscode/c_cpp_properties.json')) {
             const selection = await vscode.window.showInformationMessage(
                 'Add C++ Support for Ultra.io Contracts?',
                 'Yes',
@@ -57,31 +80,24 @@ export async function activate(context: vscode.ExtensionContext) {
             }
 
             const newFile = getTemplate();
-            if (!fs.existsSync(folderPath + '/.vscode')) {
-                fs.mkdirSync(folderPath + '/.vscode');
+            if (!fs.existsSync(workspaceFolder + '/.vscode')) {
+                fs.mkdirSync(workspaceFolder + '/.vscode');
             }
 
-            fs.writeFileSync(folderPath + '/.vscode/c_cpp_properties.json', JSON.stringify(newFile, null, 4));
+            fs.writeFileSync(workspaceFolder + '/.vscode/c_cpp_properties.json', JSON.stringify(newFile, null, 4));
             outputChannel.appendLine(`Copied C++ Properties to .vscode folder`);
             vscode.commands.executeCommand('workbench.action.reloadWindow');
         }
     });
 
-    const buildContract = vscode.commands.registerCommand('ultra.buildContract', async () => {
-        outputChannel.appendLine(
-            `Starting contract build, if this is your first time running this. It may take a moment to get the docker image, and start.`
-        );
-        outputChannel.show(true);
-        const startTime = Date.now();
-        await build(String(folderPath), { buildOpts: '', appendLine: outputChannel.appendLine });
-        outputChannel.appendLine(`Done | ${Date.now() - startTime}ms`);
-    });
-
-    vscode.commands.executeCommand('ultra.showInfoAsModal');
-
-    context.subscriptions.push(showInfo);
-    context.subscriptions.push(buildContract);
+    context.subscriptions.push(installHeaders);
 }
 
-// This method is called when your extension is deactivated
+export async function activate(context: vscode.ExtensionContext) {
+    const outputChannel = vscode.window.createOutputChannel('ultra-cpp');
+    cmdBuildContract(context, outputChannel);
+    cmdInstallHeaders(context, outputChannel);
+    vscode.commands.executeCommand(CommandNames.installHeaders);
+}
+
 export function deactivate() {}

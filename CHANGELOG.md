@@ -2,6 +2,10 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.0.0
+
+- Refactor and fix startup processes.
+
 ## 0.0.6
 
 - Ignore some files
