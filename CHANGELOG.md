@@ -2,6 +2,11 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 0.0.5
+
+- Upgrade contract-builder dependency to `1.0.4`
+- Fixes double output in output terminal
+
 ## 0.0.4
 
 - Better README

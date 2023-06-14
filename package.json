@@ -6,7 +6,7 @@
   "repository": {
     "url": "https://github.com/Stuyk/ultra-cpp-extension"
   },
-  "version": "0.0.4",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.79.0"
   },
@@ -60,6 +60,6 @@
     "tabWidth": 4
   },
   "dependencies": {
-    "@ultraos/contract-builder": "^1.0.3"
+    "@ultraos/contract-builder": "^1.0.4"
   }
 }
