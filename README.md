@@ -2,6 +2,12 @@
 
 This VSCode extension enables header files for `C++` files. It auto-injects `EOSIO` based C++ header files and enables auto-completion in VSCode.
 
+## Prerequisities
+
+- Docker
+
+**Make sure you have docker installed while using this tool!**
+
 ## Usage
 
 Create a `.cpp` file and a prompt in the bottom-right will ask you to install header files.
