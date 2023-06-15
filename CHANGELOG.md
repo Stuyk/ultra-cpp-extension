@@ -2,6 +2,10 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.2.1
+
+- Make inputs work with focus out.
+
 ## 1.2.0
 
 - Added Wallet Service with 'aes-256-cbc' encryption

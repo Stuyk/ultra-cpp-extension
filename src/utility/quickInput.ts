@@ -11,6 +11,7 @@ export function create(options: {
         value: options.value,
         placeHolder: options.placeHolder ? options.placeHolder : '',
         password: options.password ? options.password : false,
+        ignoreFocusOut: true,
     });
 
     return new Promise((resolve: (value: string | undefined) => void) => {
