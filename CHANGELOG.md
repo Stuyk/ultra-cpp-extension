@@ -2,6 +2,16 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.2.0
+
+- Added Wallet Service with 'aes-256-cbc' encryption
+- Private keys are stored in the global state of VSCode encrypted with a user password
+- Added Commands
+  - Wallet - Create
+  - Wallet - List Public Keys
+  - Wallet - Destroy
+  - Wallet - Add Key
+
 ## 1.1.0
 
 - Refactored code base

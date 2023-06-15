@@ -6,7 +6,7 @@
   "repository": {
     "url": "https://github.com/Stuyk/ultra-cpp-extension"
   },
-  "version": "1.1.0",
+  "version": "1.2.0",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -45,6 +45,26 @@
         "command": "ultra.api",
         "title": "API Query",
         "category": "Ultra"
+      },
+      {
+        "command": "ultra.createWallet",
+        "title": "Wallet - Create",
+        "category": "Ultra"
+      },
+      {
+        "command": "ultra.destroyWallet",
+        "title": "Wallet - Destroy",
+        "category": "Ultra"
+      },
+      {
+        "command": "ultra.showWalletPublicKeys",
+        "title": "Wallet - List Public Keys",
+        "category": "Ultra"
+      },
+      {
+        "command": "ultra.addKeyToWallet",
+        "title": "Wallet - Add Key",
+        "category": "Ultra"
       }
     ]
   },
@@ -72,6 +92,7 @@
   "dependencies": {
     "@types/node-fetch": "^2.6.4",
     "@ultraos/contract-builder": "^1.0.4",
+    "eosjs-ecc": "^4.0.7",
     "node-fetch": "^2.6.11"
   }
 }
