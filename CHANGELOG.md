@@ -2,6 +2,10 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.2.2
+
+- Add missing commands to README and more information + roadmap.
+
 ## 1.2.1
 
 - Make inputs work with focus out.

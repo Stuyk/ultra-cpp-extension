@@ -1,6 +1,6 @@
 # Ultra.io Smart Contract Toolkit
 
-Build smart contracts, and get rid of those annoying squigglies while working with smart contracts on EOS based chains.
+Build smart contracts, and get rid of those annoying squigglies while working with smart contracts on EOS based chains. This is your all in one toolkit to do everything EOS in the blink of an eye.
 
 ## Features
 
@@ -18,6 +18,8 @@ Build smart contracts, and get rid of those annoying squigglies while working wi
 
 These can be accessed with `(CTRL / CMD) + SHIFT + P` or through the Command Palette.
 
+### Building Smart Contracts
+
 - Ultra: Build Contract
   - Builds your smart contract
 - Ultra: Add C++ Header Files for EOSIO
@@ -26,6 +28,29 @@ These can be accessed with `(CTRL / CMD) + SHIFT + P` or through the Command Pal
   - Creates a smart contract template based on legacy templating
 - Ultra: Create Smart Contract
   - Creates a smart contract template
+
+### API Queries
+
+- Ultra: API Query
+  - Query different networks.
+  - Ultra Main Network
+  - Ultra Test Network
+  - Antelope Mainnet
+  - Jungle Testnet
+  - Custom (Provide your own) 
+
+### Wallet Service
+
+The wallet service allows you to store private keys inside of VSCode's global state with encryption. However, `1.2.2` of this extension is still missing signing transactions, and such. Will add soon.
+
+- Ultra: Wallet - Create
+  - Creates a wallet with 'aes-256-cbc' encryption
+- Ultra: Wallet - List Public Keys
+  - List all public keys available inside of the wallet
+- Ultra: Wallet - Add Key
+  - Add a key to the existing wallet
+- Ultra: Wallet - Destroy
+  - Destroy the wallet, will prompt before destroying  
 
 ## Previews
 
@@ -52,3 +77,10 @@ These can be accessed with `(CTRL / CMD) + SHIFT + P` or through the Command Pal
 
 - Q. How do I select which contract to compile in a monorepo?
   - A. Open the root `.cpp` file of the smart contract in VSCode, and have it as the active file. 
+
+## Roadmap
+
+```
+- Sign Transactions
+- Deploy Contracts
+```
