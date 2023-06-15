@@ -2,6 +2,11 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.0.3
+
+- Downgraded VSCode Requirements
+- Made contract selection use active text editor for compiling
+
 ## 1.0.0
 
 - Refactor and fix startup processes.

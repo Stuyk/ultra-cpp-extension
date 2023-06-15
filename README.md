@@ -44,3 +44,8 @@ Make sure you have the [Microsoft C++ Extension Installed](https://marketplace.v
 
 - Q. My smart contracts aren't compiling.
   - A. Ensure that you can run `docker` from the `CLI`. If not, install docker. 
+
+<br />
+
+- Q. How do I select which contract to compile in a monorepo?
+  - A. Open the root file of the project in VSCode, and have it as the active editor. 

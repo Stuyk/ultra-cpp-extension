@@ -19,22 +19,35 @@ function getWorkspaceFolder(): string | undefined {
     return activeWorkspaceFolder?.uri.fsPath.replace(/\\/gm, '/');
 }
 
+function getActiveFileFolder(): string | undefined {
+    if (!vscode.window.activeTextEditor) {
+        return undefined;
+    }
+
+    const filePath = vscode.window.activeTextEditor.document.uri.fsPath.replace(/\\/gm, '/');
+    const paths = filePath.split('/');
+    paths.pop();
+    return paths.join('/');
+}
+
 function cmdBuildContract(context: vscode.ExtensionContext, outputChannel: vscode.OutputChannel) {
     const buildContract = vscode.commands.registerCommand(CommandNames.buildContract, async () => {
         outputChannel.appendLine(
             `Starting contract build, if this is your first time running this. It may take a moment to get the docker image, and start.`
         );
         outputChannel.show(true);
-        const startTime = Date.now();
 
-        const workspaceFolder = getWorkspaceFolder();
-        if (!workspaceFolder) {
+        const startTime = Date.now();
+        const activeFileFolder = getActiveFileFolder();
+        outputChannel.appendLine(`Using File Path: ${activeFileFolder}`);
+
+        if (!activeFileFolder) {
             outputChannel.appendLine(`Could not determine workspace folder.`);
             outputChannel.appendLine(`Try opening VSCode directly on the folder containing the smart contract.`);
             return;
         }
 
-        await build(String(workspaceFolder), { buildOpts: '', appendLine: outputChannel.appendLine });
+        await build(String(activeFileFolder), { buildOpts: '', appendLine: outputChannel.appendLine });
         outputChannel.appendLine(`Done | ${Date.now() - startTime}ms`);
     });
 
