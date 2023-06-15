@@ -1,12 +1,6 @@
 # Ultra.io Smart Contract Toolkit
 
-This VSCode extension enables header files for `C++` files. 
-
-It auto-injects `EOSIO` based C++ header files and enables auto-completion in VSCode.
-
-It also allows you to build contracts using the VSCode Command Palette.
-
-Simply press `CTRL + SHIFT + P` and type `Ultra: Build Contract`.
+Build smart contracts, and get rid of those annoying squigglies while working with smart contracts on EOS based chains.
 
 ## Features
 
@@ -18,27 +12,36 @@ Simply press `CTRL + SHIFT + P` and type `Ultra: Build Contract`.
 **Make sure you have docker installed while using this tool!**
 
 - Docker
+- [Microsoft C++ Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
 
-## Usage
+## Commands
 
-Create a `.cpp` file and a prompt in the bottom-right will ask you to install header files.
+These can be accessed with `(CTRL / CMD) + SHIFT + P` or through the Command Palette.
 
-Make sure you have the [Microsoft C++ Extension Installed](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools).
+- Ultra: Build Contract
+  - Builds your smart contract
+- Ultra: Add C++ Header Files for EOSIO
+  - Adds header files to your smart contract workspace
+- Ultra: Scaffold Contract Legacy
+  - Creates a smart contract template based on legacy templating
+- Ultra: Create Smart Contract
+  - Creates a smart contract template
 
 ## Previews
 
-![](https://i.imgur.com/CwGOLcl.png)
-![](https://i.imgur.com/cP984JY.png)
+![](https://i.imgur.com/4KnGPnP.png)
+
+![](https://i.imgur.com/7aMksvK.png)
 
 ## FAQ
 
-- Q. What activates the prompt?
-  - A. Open any `C++` file and it will prompt you to add header files.
+- Q. What activates the prompt to install headers?
+  - A. Open any `.cpp` file and it will prompt you to add header files.
 
 <br />
 
 - Q. It stopped working, what can I do to fix it?
-  - A. re-install this application, and remove your `.vscode` folder from your workspace folder.
+  - A. re-install this extension, and remove your `.vscode`, and `lib` folder from your workspace folder.
 
 <br />
 
@@ -48,4 +51,4 @@ Make sure you have the [Microsoft C++ Extension Installed](https://marketplace.v
 <br />
 
 - Q. How do I select which contract to compile in a monorepo?
-  - A. Open the root file of the project in VSCode, and have it as the active editor. 
+  - A. Open the root `.cpp` file of the smart contract in VSCode, and have it as the active file. 

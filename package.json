@@ -6,7 +6,7 @@
   "repository": {
     "url": "https://github.com/Stuyk/ultra-cpp-extension"
   },
-  "version": "1.0.3",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -16,7 +16,7 @@
     "Linters"
   ],
   "activationEvents": [
-    "onLanguage:cpp"
+    "onStartupFinished"
   ],
   "icon": "icon.png",
   "galleryBanner": {
@@ -34,6 +34,16 @@
       {
         "command": "ultra.buildContract",
         "title": "Build Contract",
+        "category": "Ultra"
+      },
+      {
+        "command": "ultra.scaffoldContract",
+        "title": "Create Smart Contract",
+        "category": "Ultra"
+      },
+      {
+        "command": "ultra.api",
+        "title": "API Query",
         "category": "Ultra"
       }
     ]
@@ -60,6 +70,8 @@
     "tabWidth": 4
   },
   "dependencies": {
-    "@ultraos/contract-builder": "^1.0.4"
+    "@types/node-fetch": "^2.6.4",
+    "@ultraos/contract-builder": "^1.0.4",
+    "node-fetch": "^2.6.11"
   }
 }

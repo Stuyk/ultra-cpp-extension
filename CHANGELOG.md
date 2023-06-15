@@ -2,6 +2,17 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.1.0
+
+- Refactored code base
+- Auto dispose of anything disposable on extension deactivation
+- Added compile contract to status bar in VSCode
+- Status bar item for compiling only shows when .cpp, .hpp, or .cc files are selected
+- Status bar item changes when compilation is in progress
+- Added new action to create a smart contract quickly
+- Added new action to query against different APIs
+- Added last used api to top of query list, when making query requests
+
 ## 1.0.3
 
 - Downgraded VSCode Requirements

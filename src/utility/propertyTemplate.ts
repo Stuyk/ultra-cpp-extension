@@ -1,6 +1,4 @@
-import * as vscode from 'vscode';
-
-export const cppTemplate = {
+const PropertyTemplate = {
     configurations: [
         {
             includePath: [
@@ -22,8 +20,8 @@ export const cppTemplate = {
  *
  * @export
  * @param {vscode.ExtensionContext} context
- * @return {typeof cppTemplate}
+ * @return {typeof PropertyTemplate}
  */
-export function getTemplate(): typeof cppTemplate {
-    return JSON.parse(JSON.stringify(cppTemplate)) as typeof cppTemplate;
+export function get(): typeof PropertyTemplate {
+    return JSON.parse(JSON.stringify(PropertyTemplate)) as typeof PropertyTemplate;
 }
