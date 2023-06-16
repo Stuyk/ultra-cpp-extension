@@ -4,8 +4,12 @@ Build smart contracts, and get rid of those annoying squigglies while working wi
 
 ## Features
 
-- Add header files to any smart contract workspace for easy auto-completion
-- Ability to compile smart contracts using Docker images
+- Fix Smart Contract Header Issues
+- Build Smart Contracts
+- Deploy Smart Contracts
+- Query Endpoints
+- Wallet
+- Send Transactions
 
 ## Prerequisities
 
