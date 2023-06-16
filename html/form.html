@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        .wrapper {
+            padding: 24px;
+        }
+
+        .split {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            gap: 12px;
+        }
+
+        input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 6px;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            max-width: 200px;
+        }
+
+        label {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            min-width: 150px;
+            max-width: 150px;
+            align-self: flex-end;
+        }
+
+        button {
+            background: #7851cd;
+            border: 0px;
+            padding: 6px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 600;
+            border: 1px solid transparent;
+            color: white;
+        }
+
+        button:hover {
+            background: #7855de;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <form class="simple-form" id="form" onsubmit="handleSubmit(event)"></form>
+        <sub>If you need to specify null, write null.</sub>
+        <br />
+        <sub>If an object is required for a parameter, paste JSON data.</sub>
+    </div>
+    <script lang="js">
+        const vscode = acquireVsCodeApi ? acquireVsCodeApi() : undefined;
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {};
+
+            for(let element of e.target.elements) {
+                if (!element.name || element.name === '') {
+                    continue;
+                }
+
+                let value = element.value;
+
+                switch(value) {
+                    case 'null':
+                        value = null;
+                        break;
+                    case 'undefined':
+                        value = null;
+                        break;
+                }
+
+                formData[element.name] = value;
+            }
+
+            sendMessage('submit', formData);
+        }
+
+        /**
+         * @param {Array<string>} data
+         */
+        function setForm(data) {
+            const formElement = document.getElementById('form')
+            formElement.innerHTML = '';
+
+            for (let name of data) {
+                const split = document.createElement('div');
+                split.classList.add('split');
+                const label = document.createElement('div');
+                label.innerHTML = name;
+                label.setAttribute('for', name);
+                const input = document.createElement('input');
+                input.setAttribute('name', name);
+
+                split.appendChild(label);
+                split.appendChild(input);
+
+                formElement.appendChild(split);
+            }
+
+            const submit = document.createElement('button');
+            submit.setAttribute('type', 'submit');
+            submit.innerText = 'Submit';
+            formElement.appendChild(submit);
+        }
+
+        window.addEventListener('message', (ev) => {
+            const { event, data } = ev.data;
+
+            if (!event || !data) {
+                return;
+            }
+
+            if (event === 'setform') {
+                setForm(data);
+                return;
+            }
+        });
+
+        function sendMessage(event, data) {
+            vscode.postMessage({
+                event,
+                data
+            });
+        }
+    </script>
+</body>
+
+
+</html>

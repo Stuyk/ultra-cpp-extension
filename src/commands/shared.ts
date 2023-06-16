@@ -7,6 +7,10 @@ export const commandNames = {
     createWallet: 'ultra.createWallet',
     showWalletPublicKeys: 'ultra.showWalletPublicKeys',
     addKeyToWallet: 'ultra.addKeyToWallet',
+    unlockWallet: 'ultra.unlockWallet',
+    lockWallet: 'ultra.lockWallet',
+    transact: 'ultra.transact',
+    deployContract: 'ultra.deployContract',
 };
 
 export const installed: { [K in keyof typeof commandNames]: boolean } = {
@@ -18,4 +22,8 @@ export const installed: { [K in keyof typeof commandNames]: boolean } = {
     createWallet: false,
     showWalletPublicKeys: false,
     addKeyToWallet: false,
+    unlockWallet: false,
+    lockWallet: false,
+    transact: false,
+    deployContract: false,
 };

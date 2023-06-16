@@ -14,6 +14,7 @@ export function create<T = string>(options: {
     quickPick.title = options.title;
     quickPick.items = options.items;
     quickPick.placeholder = options.placeholder;
+    quickPick.ignoreFocusOut = true;
     quickPick.show();
 
     return new Promise((resolve: (value: string | undefined) => void) => {

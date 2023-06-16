@@ -1,4 +1,6 @@
+export * as context from './context';
 export * as files from './files';
+export * as form from './form';
 export * as propertyTemplate from './propertyTemplate';
 export * as outputChannel from './outputChannel';
 export * as quickPick from './quickPick';
@@ -6,4 +8,5 @@ export * as quickInput from './quickInput';
 export * as progress from './progressbar';
 export * as crypto from './crypto';
 export * as state from './state';
+export * as view from './view';
 export { sleep } from './sleep';

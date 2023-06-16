@@ -1,9 +1,13 @@
 export * as api from './api';
 export * as buildContract from './buildContract';
+export * as deployContract from './deployContract';
 export * as installHeaders from './installHeaders';
 export * as scaffoldContract from './scaffoldContract';
 export * as createWallet from './createWallet';
 export * as showWalletPublicKeys from './showWalletPublicKeys';
 export * as destroyWallet from './destroyWallet';
 export * as addKeyToWallet from './addKeyToWallet';
+export * as unlockWallet from './unlockWallet';
+export * as lockWallet from './lockWallet';
+export * as transact from './transact';
 export * as shared from './shared';

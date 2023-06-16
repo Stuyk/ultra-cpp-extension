@@ -2,6 +2,12 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.3.0
+
+- Add ability to transact
+- Add ability to unlock / lock wallet
+- Add ability to deploy smart contract
+
 ## 1.2.2
 
 - Add missing commands to README and more information + roadmap.

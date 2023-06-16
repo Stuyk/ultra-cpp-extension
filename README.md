@@ -38,6 +38,13 @@ These can be accessed with `(CTRL / CMD) + SHIFT + P` or through the Command Pal
   - Antelope Mainnet
   - Jungle Testnet
   - Custom (Provide your own) 
+- Ultra: Create Transaction
+  - Asks for contract name, action, who is signing, and then creates a form
+  - Create a transaction for a specific account contract
+  - Auto-creates a form to fill out
+  - onSubmit sets up an eosjs instance to perform the transaction
+- Ultra: Deploy Contract
+  - Deploy a compiled smart contract from the workspace 
 
 ### Wallet Service
 
@@ -50,7 +57,11 @@ The wallet service allows you to store private keys inside of VSCode's global st
 - Ultra: Wallet - Add Key
   - Add a key to the existing wallet
 - Ultra: Wallet - Destroy
-  - Destroy the wallet, will prompt before destroying  
+  - Destroy the wallet, will prompt before destroying, and remove all keys on confirmation 
+- Ultra: Wallet - Unlock
+  - Keep the wallet unlocked to easily sign transactions, and view keys.
+- Ultra: Wallet - Lock
+  - Lock the wallet.
 
 ## Previews
 

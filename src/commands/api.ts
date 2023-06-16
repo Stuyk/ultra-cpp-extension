@@ -2,67 +2,18 @@ import fetch from 'node-fetch';
 import * as vscode from 'vscode';
 import * as Commands from './index';
 import * as Utility from '../utility/index';
+import * as Service from '../service/index';
 import { apiWorkflows, getWorkflow } from './apiFlows';
 
 let disposable: vscode.Disposable;
 let disposableStatusBar: vscode.StatusBarItem;
 
-let firstRun = true;
-let lastUsed = { label: 'Ultra Mainnet', description: 'https://api.mainnet.ultra.io' };
-
-let defaultAPIs = [
-    { label: 'Ultra Mainnet', description: 'https://api.mainnet.ultra.io' },
-    { label: 'Ultra Testnet', description: 'https://api.testnet.ultra.io' },
-    { label: 'Antelope Mainnet', description: 'https://eos.dfuse.eosnation.io' },
-    { label: 'Jungle Testnet', description: 'https://jungle.eosusa.io' },
-    { label: 'Custom', description: 'http://localhost:8888' },
-];
-
-async function checkEndpoint(endpoint: string): Promise<boolean> {
-    const updateProgressBar = await Utility.progress.create('API', 'Checking connection...', 10);
-    const startTime = Date.now();
-    const response = await fetch(endpoint + '/v1/chain/get_info').catch((err) => {
-        return undefined;
-    });
-
-    if (!response || !response.ok) {
-        updateProgressBar({ message: 'Failed to query!', increment: 100 });
-        vscode.window.showWarningMessage(`Could not reach endpoint: ${endpoint}`);
-        return false;
-    }
-
-    updateProgressBar({ message: `Got response in ${Date.now() - startTime}ms`, increment: 100 });
-    return true;
-}
-
 export function register(context: vscode.ExtensionContext) {
     disposable = vscode.commands.registerCommand(Commands.shared.commandNames.api, async () => {
-        let api = await Utility.quickPick.create({
-            title: 'Select API',
-            items: firstRun ? defaultAPIs : [lastUsed, ...defaultAPIs],
-            placeholder: 'Select endpoint...',
-        });
-
-        if (api === 'http://localhost:8888') {
-            api = await Utility.quickInput.create({
-                title: 'Enter Custom API',
-                value: 'http://localhost:8888',
-            });
-        }
-
-        if (!api) {
-            vscode.window.setStatusBarMessage('Cancelled API Query...', 2500);
+        const endpoint = await Service.api.pick();
+        if (!endpoint) {
             return;
         }
-
-        const isResponsive = await checkEndpoint(api);
-        if (!isResponsive) {
-            vscode.window.setStatusBarMessage('API was unresponsive', 2500);
-            return;
-        }
-
-        firstRun = false;
-        lastUsed = { label: 'Last Used', description: api };
 
         const availableQueries = Object.keys(apiWorkflows);
         const dynamicItems = availableQueries.map((queryName) => {
@@ -89,7 +40,7 @@ export function register(context: vscode.ExtensionContext) {
             return;
         }
 
-        workflow(api);
+        workflow(endpoint);
     });
 
     disposableStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);

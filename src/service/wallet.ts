@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
 import * as Utility from '../utility/index';
-import { sha256 } from '../utility/crypto';
-
-// Man, I wish they'd update this. Maybe I'll do it some day. :'(
-// @ts-expect-error
 import * as ecc from 'eosjs-ecc';
 
 const walletKeyName = 'wallet';
+
+let unlockedWallet: Array<string> | undefined = undefined;
+let timeoutInstance: NodeJS.Timeout | undefined;
 
 export function add(wif: string, password: string): boolean {
     const data = Utility.state.get<string>(walletKeyName);
@@ -32,6 +31,10 @@ export function add(wif: string, password: string): boolean {
     if (privateKeys.includes(wif)) {
         vscode.window.showErrorMessage(`Key already exists.`);
         return false;
+    }
+
+    if (unlockedWallet) {
+        unlockedWallet.push(wif);
     }
 
     privateKeys.push(wif);
@@ -85,9 +88,13 @@ export async function create(password: string): Promise<boolean> {
     return true;
 }
 
-export async function get(password: string): Promise<Array<string> | undefined> {
+export async function get(password: string | undefined): Promise<Array<string> | undefined> {
+    if (isUnlocked()) {
+        return unlockedWallet;
+    }
+
     if (!Utility.state.has(walletKeyName)) {
-        const didCreate = await create(password);
+        const didCreate = await create(String(password));
         if (!didCreate) {
             return undefined;
         }
@@ -99,7 +106,7 @@ export async function get(password: string): Promise<Array<string> | undefined> 
         return undefined;
     }
 
-    const newData = Utility.crypto.decrypt<Array<string>>(data, password, true);
+    const newData = Utility.crypto.decrypt<Array<string>>(data, String(password), true);
     if (!newData || !Array.isArray(newData)) {
         vscode.window.showWarningMessage(`Could not decrypt wallet data`);
         return undefined;
@@ -108,15 +115,21 @@ export async function get(password: string): Promise<Array<string> | undefined> 
     return newData;
 }
 
-export function listPublicKeys(password: string) {
-    const data = Utility.state.get<string>(walletKeyName);
-    if (!data) {
-        vscode.window.showWarningMessage(`Could not read wallet data.`);
-        return undefined;
+export function listPublicKeys(password: string | undefined) {
+    let privateKeys: Array<string> | undefined = undefined;
+    if (!isUnlocked()) {
+        const data = Utility.state.get<string>(walletKeyName);
+        if (!data) {
+            vscode.window.showWarningMessage(`Could not read wallet data.`);
+            return undefined;
+        }
+
+        privateKeys = Utility.crypto.decrypt<Array<string>>(data, String(password), true);
+    } else {
+        privateKeys = unlockedWallet;
     }
 
-    const newData = Utility.crypto.decrypt<Array<string>>(data, password, true);
-    if (!newData || !Array.isArray(newData)) {
+    if (!privateKeys || !Array.isArray(privateKeys)) {
         vscode.window.showWarningMessage(`Could not decrypt wallet data`);
         return undefined;
     }
@@ -125,7 +138,7 @@ export function listPublicKeys(password: string) {
     outputChannel.show();
 
     outputChannel.appendLine('[');
-    for (let wif of newData) {
+    for (let wif of privateKeys) {
         const publicKey = ecc.privateToPublic(wif);
         outputChannel.appendLine(publicKey);
     }
@@ -152,4 +165,59 @@ export async function clear() {
 
     Utility.state.set(walletKeyName, undefined);
     vscode.window.showWarningMessage(`Wallet was deleted.`);
+}
+
+export async function unlock(password: string, msTimeout: number) {
+    const data = Utility.state.get<string>(walletKeyName);
+    if (!data) {
+        vscode.window.showWarningMessage(`Could not read wallet data.`);
+        return undefined;
+    }
+
+    const privateKeys = Utility.crypto.decrypt<Array<string>>(data, password, true);
+    if (!privateKeys || !Array.isArray(privateKeys)) {
+        vscode.window.showWarningMessage(`Could not decrypt wallet data`);
+        return undefined;
+    }
+
+    unlockedWallet = privateKeys;
+    if (timeoutInstance) {
+        clearTimeout(timeoutInstance);
+        timeoutInstance = undefined;
+    }
+
+    timeoutInstance = setTimeout(lock, msTimeout);
+    vscode.window.showInformationMessage(`Wallet is now unlocked, and keys are exposed for ${msTimeout / 60000}m`);
+}
+
+export async function lock() {
+    timeoutInstance = undefined;
+    unlockedWallet = undefined;
+    vscode.window.showInformationMessage('Wallet is now locked.');
+}
+
+export function isUnlocked() {
+    return typeof unlockedWallet === 'undefined' ? false : true;
+}
+
+export async function getPrivateKeys(): Promise<Array<string> | undefined> {
+    let privateKeys: string[] | undefined;
+    if (!isUnlocked()) {
+        const password = await Utility.quickInput.create({
+            title: 'Enter Password',
+            placeHolder: 'Enter wallet password',
+            value: '',
+            password: true,
+        });
+
+        if (!password) {
+            return undefined;
+        }
+
+        privateKeys = await get(password);
+    } else {
+        privateKeys = await get(undefined);
+    }
+
+    return privateKeys;
 }

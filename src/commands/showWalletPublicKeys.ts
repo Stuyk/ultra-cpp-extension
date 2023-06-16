@@ -12,6 +12,11 @@ export function register(context: vscode.ExtensionContext) {
             return;
         }
 
+        if (Service.wallet.isUnlocked()) {
+            Service.wallet.listPublicKeys(undefined);
+            return;
+        }
+
         const password = await Utility.quickInput.create({
             title: 'Enter Password',
             placeHolder: 'Enter wallet password',
