@@ -92,10 +92,3 @@ The wallet service allows you to store private keys inside of VSCode's global st
 
 - Q. How do I select which contract to compile in a monorepo?
   - A. Open the root `.cpp` file of the smart contract in VSCode, and have it as the active file. 
-
-## Roadmap
-
-```
-- Sign Transactions
-- Deploy Contracts
-```
