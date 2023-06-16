@@ -2,6 +2,10 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.3.3
+
+- Move glob to dependency tree
+
 ## 1.3.1
 
 - Remove DOM from tsconfig
