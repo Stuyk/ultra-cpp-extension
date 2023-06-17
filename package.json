@@ -6,7 +6,7 @@
   "repository": {
     "url": "https://github.com/Stuyk/ultra-cpp-extension"
   },
-  "version": "1.3.3",
+  "version": "1.3.4",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -85,6 +85,16 @@
         "command": "ultra.lockWallet",
         "title": "Wallet - Lock",
         "category": "Ultra"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "cpp",
+        "path": "./snippets/ultra.code-snippets"
+      },
+      {
+        "language": "cpp",
+        "path": "./snippets/ultra-legacy.code-snippets"
       }
     ]
   },
