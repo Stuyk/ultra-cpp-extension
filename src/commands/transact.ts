@@ -89,35 +89,6 @@ export function register(context: vscode.ExtensionContext) {
             return;
         }
 
-        let privateKeys: string[] | undefined;
-        if (!Service.wallet.isUnlocked()) {
-            const password = await Utility.quickInput.create({
-                title: 'Enter Password',
-                placeHolder: 'Enter wallet password',
-                value: '',
-                password: true,
-            });
-
-            if (!password) {
-                vscode.window.showErrorMessage('Password was not defined.');
-                return;
-            }
-
-            privateKeys = await Service.wallet.get(password);
-        } else {
-            privateKeys = await Service.wallet.get(undefined);
-        }
-
-        if (!privateKeys) {
-            vscode.window.showErrorMessage('Failed to obtain any keys from wallet');
-            return;
-        }
-
-        if (privateKeys.length <= 0) {
-            vscode.window.showErrorMessage('Add at least one private key to wallet');
-            return;
-        }
-
         let [actor, permission] = signer.split('@');
         if (!permission) {
             permission = 'active';
