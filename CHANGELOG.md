@@ -5,6 +5,7 @@ All notable changes to the "ultra-cpp" extension will be documented in this file
 ## 1.3.4
 
 - Add a couple of auto-complete snippets for making tables, and actions.
+- Fix Double Wallet Prompts
 
 ## 1.3.3
 
