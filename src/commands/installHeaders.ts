@@ -3,7 +3,6 @@ import * as Utility from '../utility';
 import * as fs from 'fs';
 import * as Service from '../service';
 
-let disposable: vscode.Disposable;
 let headersInstalled = false;
 let propertyFileInstalled = false;
 
@@ -97,8 +96,21 @@ async function addPropertyFile() {
     });
 }
 
-async function register() {
-    disposable = vscode.commands.registerCommand(Service.command.commandNames.installHeaders, async () => {
+export async function listen() {
+    const onChangeDisposable = vscode.window.onDidChangeActiveTextEditor(async (e: vscode.TextEditor | undefined) => {
+        if (!e || !e.document) {
+            return;
+        }
+
+        const filePath = e.document.uri.fsPath;
+        if (!filePath.includes('.cpp') && !filePath.includes('.cc')) {
+            return;
+        }
+
+        vscode.commands.executeCommand(Service.command.commandNames.installHeaders);
+    });
+
+    const disposable = vscode.commands.registerCommand(Service.command.commandNames.installHeaders, async () => {
         const workspaceFolder = Utility.files.getWorkspaceFolder();
         if (!workspaceFolder) {
             vscode.window.showErrorMessage(`Could not determine workspace folder. Open a folder with VSCode. `);
@@ -113,35 +125,16 @@ async function register() {
     context.subscriptions.push(disposable);
 
     return () => {
-        if (!disposable) {
-            return;
+        if (onChangeDisposable) {
+            onChangeDisposable.dispose();
         }
 
-        disposable.dispose();
-    };
-}
-
-export async function listen() {
-    const disposable = vscode.window.onDidChangeActiveTextEditor((e: vscode.TextEditor | undefined) => {
-        if (!e || !e.document) {
-            return;
+        if (disposable) {
+            disposable.dispose();
         }
 
-        const filePath = e.document.uri.fsPath;
-        if (!filePath.includes('.cpp') && !filePath.includes('.cc')) {
-            return;
-        }
-
-        register();
-        vscode.commands.executeCommand(Service.command.commandNames.installHeaders);
-    });
-
-    return () => {
-        if (!disposable) {
-            return;
-        }
-
-        disposable.dispose();
+        propertyFileInstalled = false;
+        headersInstalled = false;
     };
 }
 

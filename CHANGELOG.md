@@ -2,6 +2,12 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.3.6
+
+- Fix status bar registration
+- Dispose of status bars on extension de-activation
+- Remember last API even after extension restart
+
 ## 1.3.5
 
 - More verbose transaction errors

@@ -5,9 +5,6 @@ import { Api, JsonRpc } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 import * as Service from '../service/index';
 
-let lastUsed = { label: 'Ultra Mainnet', description: 'https://api.mainnet.ultra.io' };
-let firstRun = true;
-
 let defaultAPIs = [
     { label: 'Ultra Mainnet', description: 'https://api.mainnet.ultra.io' },
     { label: 'Ultra Testnet', description: 'https://api.testnet.ultra.io' },
@@ -15,6 +12,15 @@ let defaultAPIs = [
     { label: 'Jungle Testnet', description: 'https://jungle.eosusa.io' },
     { label: 'Custom', description: 'http://localhost:8888' },
 ];
+
+async function getLastAPI(): Promise<{ label: string; description: string } | undefined> {
+    const exists = await Utility.state.has('api');
+    if (!exists) {
+        return undefined;
+    }
+
+    return await Utility.state.get<{ label: string; description: string }>('api');
+}
 
 async function checkEndpoint(endpoint: string): Promise<boolean> {
     const updateProgressBar = await Utility.progress.create('API', 'Checking connection...', 10);
@@ -34,9 +40,11 @@ async function checkEndpoint(endpoint: string): Promise<boolean> {
 }
 
 export async function pick(): Promise<string | undefined> {
+    const lastApi = await getLastAPI();
+
     let api = await Utility.quickPick.create({
         title: 'Select API',
-        items: firstRun ? defaultAPIs : [lastUsed, ...defaultAPIs],
+        items: lastApi ? [lastApi, ...defaultAPIs] : defaultAPIs,
         placeholder: 'Select endpoint...',
     });
 
@@ -58,8 +66,7 @@ export async function pick(): Promise<string | undefined> {
         return;
     }
 
-    firstRun = false;
-    lastUsed = { label: 'Last Used', description: api };
+    await Utility.state.set('api', { label: 'Last Used', description: api });
     return api;
 }
 

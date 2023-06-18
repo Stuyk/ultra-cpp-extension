@@ -25,3 +25,11 @@ export function getActiveFileFolder(): string | undefined {
     paths.pop();
     return paths.join('/');
 }
+
+export function getActiveFile(): string | undefined {
+    if (!vscode.window.activeTextEditor) {
+        return undefined;
+    }
+
+    return vscode.window.activeTextEditor.document.uri.fsPath.replace(/\\/gm, '/');
+}

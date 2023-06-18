@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as Utility from '../utility/index';
 import * as Service from '../service/index';
+import * as StatusBars from '../statusbars/index';
 import { apiWorkflows, getWorkflow } from './apiFlows';
 
 let disposable: vscode.Disposable;
@@ -41,11 +42,7 @@ async function register() {
         workflow(endpoint);
     });
 
-    disposableStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
-    disposableStatusBar.text = 'ᕫ API Query';
-    disposableStatusBar.command = Service.command.commandNames.api;
-    disposableStatusBar.tooltip = 'Query Data from the Blockchain';
-    disposableStatusBar.show();
+    StatusBars.api.showStatusBar();
 
     const context = await Utility.context.get();
     context.subscriptions.push(disposable);
@@ -57,6 +54,8 @@ async function register() {
         if (disposableStatusBar) {
             disposableStatusBar.dispose();
         }
+
+        StatusBars.api.dispose();
     };
 }
 

@@ -1,10 +1,23 @@
 import * as vscode from 'vscode';
 import * as Utility from '../utility';
 import * as Service from '../service';
+import * as StatusBars from '../statusbars';
 import { build } from '@ultraos/contract-builder';
 
 let disposable: vscode.Disposable;
-let disposableStatusBar: vscode.StatusBarItem;
+const fileExtensions = ['.cpp', '.hpp', '.cc'];
+
+function isCpp(fileName: string) {
+    for (let ext of fileExtensions) {
+        if (!fileName.includes(ext)) {
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
+}
 
 async function register() {
     disposable = vscode.commands.registerCommand(Service.command.commandNames.buildContract, async () => {
@@ -30,9 +43,7 @@ async function register() {
                 progress.report({ message: 'Starting', increment: 0 });
                 progress.report({ message: `File Path ${activeFileFolder}`, increment: 10 });
 
-                disposableStatusBar.text = 'ᕫ Compiling';
-                disposableStatusBar.command = undefined;
-                disposableStatusBar.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
+                StatusBars.buildContract.disable();
 
                 Utility.outputChannel.get().clear();
                 Utility.outputChannel.get().appendLine(`Using File Path: ${activeFileFolder}`);
@@ -42,72 +53,45 @@ async function register() {
                     appendLine: Utility.outputChannel.get().appendLine,
                 });
 
+                StatusBars.buildContract.enable();
+
                 progress.report({ message: 'Finished Build', increment: 100 });
                 Utility.outputChannel.get().appendLine(`Done | ${Date.now() - startTime}ms`);
-
-                disposableStatusBar.text = 'ᕫ Compile';
-                disposableStatusBar.command = Service.command.commandNames.buildContract;
-                disposableStatusBar.backgroundColor = undefined;
             }
         );
     });
 
-    disposableStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
-    disposableStatusBar.text = 'ᕫ Compile';
-    disposableStatusBar.command = Service.command.commandNames.buildContract;
-    disposableStatusBar.tooltip = 'Compile the smart contract in the active text editor.';
-    disposableStatusBar.show();
-
-    vscode.window.onDidChangeActiveTextEditor((e) => {
+    const onChangeDisposable = vscode.window.onDidChangeActiveTextEditor((e) => {
         if (!e || !e.document) {
             return;
         }
 
-        const fileExtensions = ['.cpp', '.hpp', '.cc'];
-        let isCpp = false;
-        for (let ext of fileExtensions) {
-            if (!e.document.fileName.includes(ext)) {
-                continue;
-            }
-
-            isCpp = true;
-            break;
-        }
-
-        if (isCpp) {
-            disposableStatusBar.show();
+        if (isCpp(e.document.fileName)) {
+            StatusBars.buildContract.showStatusBar();
         } else {
-            disposableStatusBar.hide();
+            StatusBars.buildContract.hideStatusBar();
         }
     });
 
     const context = await Utility.context.get();
     context.subscriptions.push(disposable);
+
+    const activeFile = Utility.files.getActiveFile();
+    if (isCpp(activeFile)) {
+        StatusBars.buildContract.showStatusBar();
+    }
+
     return () => {
+        if (onChangeDisposable) {
+            onChangeDisposable.dispose();
+        }
+
         if (disposable) {
             disposable.dispose();
         }
 
-        if (disposableStatusBar) {
-            disposableStatusBar.dispose();
-        }
+        StatusBars.buildContract.dispose();
     };
-}
-
-export function showStatusBar() {
-    if (!disposableStatusBar) {
-        return;
-    }
-
-    disposableStatusBar.show();
-}
-
-export function hideStatusBar() {
-    if (!disposableStatusBar) {
-        return;
-    }
-
-    disposableStatusBar.hide();
 }
 
 Service.command.register('buildContract', register);
