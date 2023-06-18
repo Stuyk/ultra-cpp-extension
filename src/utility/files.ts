@@ -1,4 +1,10 @@
 import * as vscode from 'vscode';
+import * as Utility from '../utility/index';
+
+export async function getExtensionPath(): Promise<string> {
+    const context = await Utility.context.get();
+    return context.extensionPath.replace(/\\/gm, '/');
+}
 
 export function getWorkspaceFolder(): string | undefined {
     if (!vscode.workspace.workspaceFolders) {

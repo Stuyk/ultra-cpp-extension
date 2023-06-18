@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
 import * as Service from '../service/index';
-import * as Commands from './index';
 import * as Utility from '../utility/index';
 
 let disposable: vscode.Disposable;
 
-export function register(context: vscode.ExtensionContext) {
-    disposable = vscode.commands.registerCommand(Commands.shared.commandNames.showWalletPublicKeys, async () => {
+async function register() {
+    disposable = vscode.commands.registerCommand(Service.command.commandNames.showWalletPublicKeys, async () => {
         if (!Service.wallet.exists()) {
             vscode.window.showInformationMessage('No wallet available.');
             return;
@@ -32,14 +31,16 @@ export function register(context: vscode.ExtensionContext) {
         Service.wallet.listPublicKeys(password);
     });
 
-    Commands.shared.installed.showWalletPublicKeys = true;
+    const context = await Utility.context.get();
     context.subscriptions.push(disposable);
+
+    return () => {
+        if (!disposable) {
+            return;
+        }
+
+        disposable.dispose();
+    };
 }
 
-export function dispose() {
-    if (!disposable) {
-        return;
-    }
-
-    disposable.dispose();
-}
+Service.command.register('showWalletPublicKeys', register);

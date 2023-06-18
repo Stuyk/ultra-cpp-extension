@@ -7,8 +7,8 @@ const walletKeyName = 'wallet';
 let unlockedWallet: Array<string> | undefined = undefined;
 let timeoutInstance: NodeJS.Timeout | undefined;
 
-export function add(wif: string, password: string): boolean {
-    const data = Utility.state.get<string>(walletKeyName);
+export async function add(wif: string, password: string): Promise<boolean> {
+    const data = await Utility.state.get<string>(walletKeyName);
     if (!data) {
         vscode.window.showWarningMessage(`Could not read wallet data.`);
         return false;
@@ -100,7 +100,7 @@ export async function get(password: string | undefined): Promise<Array<string> |
         }
     }
 
-    const data = Utility.state.get<string>(walletKeyName);
+    const data = await Utility.state.get<string>(walletKeyName);
     if (!data) {
         vscode.window.showWarningMessage(`Could not read wallet data.`);
         return undefined;
@@ -115,10 +115,10 @@ export async function get(password: string | undefined): Promise<Array<string> |
     return newData;
 }
 
-export function listPublicKeys(password: string | undefined) {
+export async function listPublicKeys(password: string | undefined) {
     let privateKeys: Array<string> | undefined = undefined;
     if (!isUnlocked()) {
-        const data = Utility.state.get<string>(walletKeyName);
+        const data = await Utility.state.get<string>(walletKeyName);
         if (!data) {
             vscode.window.showWarningMessage(`Could not read wallet data.`);
             return undefined;
@@ -168,7 +168,7 @@ export async function clear() {
 }
 
 export async function unlock(password: string, msTimeout: number) {
-    const data = Utility.state.get<string>(walletKeyName);
+    const data = await Utility.state.get<string>(walletKeyName);
     if (!data) {
         vscode.window.showWarningMessage(`Could not read wallet data.`);
         return undefined;

@@ -2,15 +2,15 @@ import * as vscode from 'vscode';
 import * as Utility from './index';
 import * as fs from 'fs';
 
-export function create(
+export async function create(
     title: string,
     htmlFileName: string
-): {
+): Promise<{
     panel: vscode.WebviewPanel;
     post: (data: { event: string; data: any }) => void;
     on: (event: string, cb: (data: any) => void) => void;
-} {
-    const context = Utility.context.get();
+}> {
+    const context = await Utility.context.get();
     const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
     const panel = vscode.window.createWebviewPanel('ultra.view', title, column || vscode.ViewColumn.One, {
         enableForms: true,

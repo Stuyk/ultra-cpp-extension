@@ -1,13 +1,10 @@
 import * as vscode from 'vscode';
 import * as Service from '../service/index';
-import * as Commands from './index';
 import * as Utility from '../utility/index';
 import { GetAbiResult } from 'eosjs/dist/eosjs-rpc-interfaces';
 
-let disposable: vscode.Disposable;
-
-export function register(context: vscode.ExtensionContext) {
-    disposable = vscode.commands.registerCommand(Commands.shared.commandNames.transact, async () => {
+async function register() {
+    const disposable = vscode.commands.registerCommand(Service.command.commandNames.transact, async () => {
         if (!Service.wallet.exists()) {
             vscode.window.showErrorMessage('No wallet available.');
             return;
@@ -39,16 +36,20 @@ export function register(context: vscode.ExtensionContext) {
             return;
         }
 
-        const actions: { [action: string]: string[] } = {};
+        const actions: { [action: string]: Array<{ name: string; type: string }> } = {};
         for (let abiStruct of result.abi.structs) {
             const isAction = result.abi.actions.find((x) => x.name === abiStruct.name);
             if (!isAction) {
                 continue;
             }
 
-            actions[abiStruct.name] = abiStruct.fields.map((x) => {
-                return x.name;
-            });
+            if (!actions[abiStruct.name]) {
+                actions[abiStruct.name] = [];
+            }
+
+            for (let field of abiStruct.fields) {
+                actions[abiStruct.name].push({ name: field.name, type: field.type });
+            }
         }
 
         const items = Object.keys(actions).map((x) => {
@@ -110,9 +111,15 @@ export function register(context: vscode.ExtensionContext) {
                 { blocksBehind: 3, expireSeconds: 30, broadcast: true }
             )
             .catch((err) => {
-                console.error(err);
-                return err;
+                outputChannel.appendLine(err);
+                outputChannel.show();
+                return undefined;
             });
+
+        if (!transactionResult) {
+            outputChannel.appendLine('Failed to transact.');
+            return;
+        }
 
         if (typeof transactionResult === 'object') {
             outputChannel.appendLine(JSON.stringify(transactionResult, null, 2));
@@ -124,14 +131,16 @@ export function register(context: vscode.ExtensionContext) {
         outputChannel.show();
     });
 
-    Commands.shared.installed.transact = true;
+    const context = await Utility.context.get();
     context.subscriptions.push(disposable);
+
+    return () => {
+        if (!disposable) {
+            return;
+        }
+
+        disposable.dispose();
+    };
 }
 
-export function dispose() {
-    if (!disposable) {
-        return;
-    }
-
-    disposable.dispose();
-}
+Service.command.register('transact', register);

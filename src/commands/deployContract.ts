@@ -8,8 +8,8 @@ import { Serialize } from 'eosjs';
 
 let disposable: vscode.Disposable;
 
-export function register(context: vscode.ExtensionContext) {
-    disposable = vscode.commands.registerCommand(Commands.shared.commandNames.deployContract, async () => {
+async function register() {
+    disposable = vscode.commands.registerCommand(Service.command.commandNames.deployContract, async () => {
         if (!Service.wallet.exists()) {
             vscode.window.showInformationMessage('No wallet available.');
             return;
@@ -112,9 +112,16 @@ export function register(context: vscode.ExtensionContext) {
                 { blocksBehind: 3, expireSeconds: 30, broadcast: true }
             )
             .catch((err) => {
-                console.error(err);
-                return err;
+                outputChannel.appendLine(err);
+                outputChannel.show();
+                return undefined;
             });
+
+        if (!transactionResult) {
+            outputChannel.appendLine(`Could not deploy contract.`);
+            outputChannel.show();
+            return;
+        }
 
         if (typeof transactionResult === 'object') {
             outputChannel.appendLine(JSON.stringify(transactionResult, null, 2));
@@ -126,14 +133,16 @@ export function register(context: vscode.ExtensionContext) {
         outputChannel.show();
     });
 
-    Commands.shared.installed.transact = true;
+    const context = await Utility.context.get();
     context.subscriptions.push(disposable);
+
+    return () => {
+        if (!disposable) {
+            return;
+        }
+
+        disposable.dispose();
+    };
 }
 
-export function dispose() {
-    if (!disposable) {
-        return;
-    }
-
-    disposable.dispose();
-}
+Service.command.register('deployContract', register);

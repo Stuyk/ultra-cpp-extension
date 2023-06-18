@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as Utility from '../utility';
-import * as Commands from './index';
 import * as fs from 'fs';
+import * as Service from '../service';
 
 let disposable: vscode.Disposable;
 let headersInstalled = false;
 let propertyFileInstalled = false;
 
-async function addHeaders(context: vscode.ExtensionContext) {
+async function addHeaders() {
     if (headersInstalled) {
         return;
     }
@@ -32,7 +32,7 @@ async function addHeaders(context: vscode.ExtensionContext) {
         { location: vscode.ProgressLocation.Notification, cancellable: false, title: 'Install Headers' },
         async (progress) => {
             progress.report({ message: 'Starting', increment: 10 });
-            fs.cpSync(`${context.extensionPath}/include`, `${workspaceFolder}/lib`, {
+            fs.cpSync(`${Utility.files.getExtensionPath()}/include`, `${workspaceFolder}/lib`, {
                 recursive: true,
                 force: true,
             });
@@ -46,7 +46,7 @@ async function addHeaders(context: vscode.ExtensionContext) {
     });
 }
 
-async function addPropertyFile(context: vscode.ExtensionContext) {
+async function addPropertyFile() {
     if (propertyFileInstalled) {
         return;
     }
@@ -97,24 +97,32 @@ async function addPropertyFile(context: vscode.ExtensionContext) {
     });
 }
 
-export function register(context: vscode.ExtensionContext) {
-    disposable = vscode.commands.registerCommand(Commands.shared.commandNames.installHeaders, async () => {
+async function register() {
+    disposable = vscode.commands.registerCommand(Service.command.commandNames.installHeaders, async () => {
         const workspaceFolder = Utility.files.getWorkspaceFolder();
         if (!workspaceFolder) {
             vscode.window.showErrorMessage(`Could not determine workspace folder. Open a folder with VSCode. `);
             return;
         }
 
-        await addHeaders(context);
-        await addPropertyFile(context);
+        await addHeaders();
+        await addPropertyFile();
     });
 
-    Commands.shared.installed.installHeaders = true;
+    const context = await Utility.context.get();
     context.subscriptions.push(disposable);
+
+    return () => {
+        if (!disposable) {
+            return;
+        }
+
+        disposable.dispose();
+    };
 }
 
-export function listen(context: vscode.ExtensionContext) {
-    const instance = vscode.window.onDidChangeActiveTextEditor((e: vscode.TextEditor | undefined) => {
+export async function listen() {
+    const disposable = vscode.window.onDidChangeActiveTextEditor((e: vscode.TextEditor | undefined) => {
         if (!e || !e.document) {
             return;
         }
@@ -124,21 +132,17 @@ export function listen(context: vscode.ExtensionContext) {
             return;
         }
 
-        if (Commands.shared.installed.installHeaders) {
-            console.log(`Headers were registered. Disposing of onDidChangeActiveTextEditor`);
-            instance.dispose();
+        register();
+        vscode.commands.executeCommand(Service.command.commandNames.installHeaders);
+    });
+
+    return () => {
+        if (!disposable) {
             return;
         }
 
-        register(context);
-        vscode.commands.executeCommand(Commands.shared.commandNames.installHeaders);
-    });
+        disposable.dispose();
+    };
 }
 
-export function dispose() {
-    if (!disposable) {
-        return;
-    }
-
-    disposable.dispose();
-}
+Service.command.register('installHeaders', listen);

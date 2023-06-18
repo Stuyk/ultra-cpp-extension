@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as Utility from '../utility';
-import * as Commands from './index';
 import * as fs from 'fs';
+import * as Service from '../service/index';
 
 let disposable: vscode.Disposable;
 
-export function register(context: vscode.ExtensionContext) {
-    disposable = vscode.commands.registerCommand(Commands.shared.commandNames.scaffoldContract, async () => {
+async function register() {
+    disposable = vscode.commands.registerCommand(Service.command.commandNames.scaffoldContract, async () => {
         const workspaceFolder = Utility.files.getWorkspaceFolder();
         if (!workspaceFolder) {
             vscode.window.showErrorMessage(`Could not determine workspace folder. Open a folder with VSCode. `);
@@ -39,7 +39,7 @@ export function register(context: vscode.ExtensionContext) {
         }
 
         const filePath = `${workspaceFolder}/${folderPath}/hello.cpp`;
-        fs.cpSync(`${context.extensionPath}/files/hello.cpp`, filePath, {
+        fs.cpSync(`${Utility.files.getExtensionPath()}/files/hello.cpp`, filePath, {
             recursive: true,
             force: true,
         });
@@ -48,14 +48,16 @@ export function register(context: vscode.ExtensionContext) {
         vscode.workspace.openTextDocument(filePath);
     });
 
-    Commands.shared.installed.scaffoldContract = true;
+    const context = await Utility.context.get();
     context.subscriptions.push(disposable);
+
+    return () => {
+        if (!disposable) {
+            return;
+        }
+
+        disposable.dispose();
+    };
 }
 
-export function dispose() {
-    if (!disposable) {
-        return;
-    }
-
-    disposable.dispose();
-}
+Service.command.register('scaffoldContract', register);

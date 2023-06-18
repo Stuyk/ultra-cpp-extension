@@ -2,6 +2,11 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.3.5
+
+- More verbose transaction errors
+- Refactor command registration
+
 ## 1.3.4
 
 - Add a couple of auto-complete snippets for making tables, and actions.

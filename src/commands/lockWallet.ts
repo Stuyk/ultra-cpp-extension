@@ -1,22 +1,23 @@
 import * as vscode from 'vscode';
 import * as Service from '../service/index';
-import * as Commands from './index';
+import * as Utility from '../utility/index';
 
 let disposable: vscode.Disposable;
 
-export function register(context: vscode.ExtensionContext) {
-    disposable = vscode.commands.registerCommand(Commands.shared.commandNames.lockWallet, async () => {
+async function register() {
+    disposable = vscode.commands.registerCommand(Service.command.commandNames.lockWallet, async () => {
         Service.wallet.lock();
     });
 
-    Commands.shared.installed.lockWallet = true;
+    const context = await Utility.context.get();
     context.subscriptions.push(disposable);
+    return () => {
+        if (!disposable) {
+            return;
+        }
+
+        disposable.dispose();
+    };
 }
 
-export function dispose() {
-    if (!disposable) {
-        return;
-    }
-
-    disposable.dispose();
-}
+Service.command.register('lockWallet', register);

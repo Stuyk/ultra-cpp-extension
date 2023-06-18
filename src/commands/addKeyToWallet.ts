@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
 import * as Service from '../service/index';
-import * as Commands from './index';
 import * as Utility from '../utility/index';
 
 let disposable: vscode.Disposable;
 
-export function register(context: vscode.ExtensionContext) {
-    disposable = vscode.commands.registerCommand(Commands.shared.commandNames.addKeyToWallet, async () => {
+async function register() {
+    disposable = vscode.commands.registerCommand(Service.command.commandNames.addKeyToWallet, async () => {
         if (!Service.wallet.exists()) {
             vscode.window.showErrorMessage('Wallet does not exist. Create a wallet first!');
             return;
@@ -39,14 +38,15 @@ export function register(context: vscode.ExtensionContext) {
         await Service.wallet.add(wifKey, password);
     });
 
-    Commands.shared.installed.addKeyToWallet = true;
+    const context = await Utility.context.get();
     context.subscriptions.push(disposable);
+    return () => {
+        if (!disposable) {
+            return;
+        }
+
+        disposable.dispose();
+    };
 }
 
-export function dispose() {
-    if (!disposable) {
-        return;
-    }
-
-    disposable.dispose();
-}
+Service.command.register('addKeyToWallet', register);

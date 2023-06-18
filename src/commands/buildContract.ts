@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import * as Utility from '../utility';
-import * as Commands from './index';
+import * as Service from '../service';
 import { build } from '@ultraos/contract-builder';
 
 let disposable: vscode.Disposable;
 let disposableStatusBar: vscode.StatusBarItem;
 
-export function register(context: vscode.ExtensionContext) {
-    disposable = vscode.commands.registerCommand(Commands.shared.commandNames.buildContract, async () => {
+async function register() {
+    disposable = vscode.commands.registerCommand(Service.command.commandNames.buildContract, async () => {
         Utility.outputChannel
             .get()
             .appendLine(
@@ -46,7 +46,7 @@ export function register(context: vscode.ExtensionContext) {
                 Utility.outputChannel.get().appendLine(`Done | ${Date.now() - startTime}ms`);
 
                 disposableStatusBar.text = 'ᕫ Compile';
-                disposableStatusBar.command = Commands.shared.commandNames.buildContract;
+                disposableStatusBar.command = Service.command.commandNames.buildContract;
                 disposableStatusBar.backgroundColor = undefined;
             }
         );
@@ -54,7 +54,7 @@ export function register(context: vscode.ExtensionContext) {
 
     disposableStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
     disposableStatusBar.text = 'ᕫ Compile';
-    disposableStatusBar.command = Commands.shared.commandNames.buildContract;
+    disposableStatusBar.command = Service.command.commandNames.buildContract;
     disposableStatusBar.tooltip = 'Compile the smart contract in the active text editor.';
     disposableStatusBar.show();
 
@@ -81,8 +81,17 @@ export function register(context: vscode.ExtensionContext) {
         }
     });
 
+    const context = await Utility.context.get();
     context.subscriptions.push(disposable);
-    Commands.shared.installed.buildContract = true;
+    return () => {
+        if (disposable) {
+            disposable.dispose();
+        }
+
+        if (disposableStatusBar) {
+            disposableStatusBar.dispose();
+        }
+    };
 }
 
 export function showStatusBar() {
@@ -101,12 +110,4 @@ export function hideStatusBar() {
     disposableStatusBar.hide();
 }
 
-export function dispose() {
-    if (disposable) {
-        disposable.dispose();
-    }
-
-    if (disposableStatusBar) {
-        disposableStatusBar.dispose();
-    }
-}
+Service.command.register('buildContract', register);

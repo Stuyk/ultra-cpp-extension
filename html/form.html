@@ -100,20 +100,21 @@
         }
 
         /**
-         * @param {Array<string>} data
+         * @param {Array<{ name: string, type: string }>} data
          */
         function setForm(data) {
             const formElement = document.getElementById('form')
             formElement.innerHTML = '';
 
-            for (let name of data) {
+            for (let inputOption of data) {
                 const split = document.createElement('div');
                 split.classList.add('split');
                 const label = document.createElement('div');
-                label.innerHTML = name;
-                label.setAttribute('for', name);
+                label.innerHTML = inputOption.name;
+                label.setAttribute('for', inputOption.name);
                 const input = document.createElement('input');
-                input.setAttribute('name', name);
+                input.setAttribute('name', inputOption.name);
+                input.setAttribute('placeholder', inputOption.type)
 
                 split.appendChild(label);
                 split.appendChild(input);
@@ -123,7 +124,7 @@
 
             const submit = document.createElement('button');
             submit.setAttribute('type', 'submit');
-            submit.innerText = 'Submit';
+            submit.innerText = 'Sign & Send';
             formElement.appendChild(submit);
         }
 
