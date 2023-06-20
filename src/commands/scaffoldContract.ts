@@ -39,7 +39,8 @@ async function register() {
         }
 
         const filePath = `${workspaceFolder}/${folderPath}/hello.cpp`;
-        fs.cpSync(`${Utility.files.getExtensionPath()}/files/hello.cpp`, filePath, {
+        const extensionPath = await Utility.files.getExtensionPath();
+        fs.cpSync(`${extensionPath}/files/hello.cpp`, filePath, {
             recursive: true,
             force: true,
         });

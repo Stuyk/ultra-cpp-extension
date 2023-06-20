@@ -31,7 +31,8 @@ async function addHeaders() {
         { location: vscode.ProgressLocation.Notification, cancellable: false, title: 'Install Headers' },
         async (progress) => {
             progress.report({ message: 'Starting', increment: 10 });
-            fs.cpSync(`${Utility.files.getExtensionPath()}/include`, `${workspaceFolder}/lib`, {
+            const extensionPath = await Utility.files.getExtensionPath();
+            fs.cpSync(`${extensionPath}/include`, `${workspaceFolder}/lib`, {
                 recursive: true,
                 force: true,
             });

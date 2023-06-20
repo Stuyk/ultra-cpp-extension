@@ -2,6 +2,10 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.3.8
+
+- Fix extension path issues.
+
 ## 1.3.7
 
 - Add workflow to GitHub for automated publishing
