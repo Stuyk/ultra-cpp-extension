@@ -2,6 +2,12 @@
 
 All notable changes to the "ultra-cpp" extension will be documented in this file.
 
+## 1.3.9
+
+- Fix issue where wallet could not be destroyed properly.
+- Fix issue where wallet could not be created again after being destroyed.
+- Added 'Wallet - Create Key' command
+
 ## 1.3.8
 
 - Fix extension path issues.

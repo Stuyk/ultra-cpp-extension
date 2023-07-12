@@ -6,7 +6,8 @@ let disposable: vscode.Disposable;
 
 async function register() {
     disposable = vscode.commands.registerCommand(Service.command.commandNames.createWallet, async () => {
-        if (Service.wallet.exists()) {
+        const walletExists = await Service.wallet.exists();
+        if (walletExists) {
             vscode.window.showInformationMessage('Wallet already exists!');
             return;
         }

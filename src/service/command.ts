@@ -13,6 +13,7 @@ export const commandNames = {
     lockWallet: 'ultra.lockWallet',
     transact: 'ultra.transact',
     deployContract: 'ultra.deployContract',
+    createKey: 'ultra.createKey',
 };
 
 const commands: { [key: string]: Function } = {};

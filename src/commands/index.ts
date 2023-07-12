@@ -1,5 +1,6 @@
 import './api';
 import './buildContract';
+import './createKey';
 import './deployContract';
 import './installHeaders';
 import './scaffoldContract';

@@ -145,8 +145,9 @@ export async function listPublicKeys(password: string | undefined) {
     outputChannel.appendLine(']');
 }
 
-export function exists() {
-    return typeof Utility.state.get<string>(walletKeyName) !== 'undefined';
+export async function exists() {
+    const res = await Utility.state.get<string>(walletKeyName);
+    return res ? true : false;
 }
 
 export async function clear() {

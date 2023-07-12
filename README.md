@@ -66,6 +66,8 @@ The wallet service allows you to store private keys inside of VSCode's global st
   - Keep the wallet unlocked to easily sign transactions, and view keys.
 - Ultra: Wallet - Lock
   - Lock the wallet.
+- Ultra: Wallet - Create Key
+  - Create a key, and print it to console.
 
 ## Previews
 
